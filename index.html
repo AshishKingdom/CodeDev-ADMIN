@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>CodeDev Admin</title>
+  </head>
+  <body>
+    <script>
+      // login is required to create new contests
+      if (
+        localStorage.getItem("user") == null ||
+        localStorage.getItem("token") == null ||
+        localStorage.getItem("is_admin") == null ||
+        localStorage.getItem("is_admin") == false
+      ) {
+        window.location = "/admin_login.html";
+      }
+
+      function createProblems(e) {
+        const n = +prompt("Total number of Problems? ");
+        const p = document.getElementById("problems");
+
+        let content = "";
+        for (let num = 1; num <= n; num++) {
+          const htmlData = `<div class="problem-data" id="problem-${num}">
+          <div class="input-heading">Problem Info:</div>
+          <input name="problem_name" placeholder="Problem Name" required title="Problem Name"/>
+          <textarea name="problem_desc" placeholder="Problem Description" title="Problem Description" required style="height:100px"></textarea>
+          <textarea name="sample_input" placeholder="Sample Input" title="Sample Input" required style="height:100px"></textarea>
+          <textarea name="sample_output" placeholder="Sample Output" title="Sample Output" required style="height:100px"></textarea>
+          <textarea name="sample_explanation" placeholder="Sample Explanation" title="Sample Explanation" required style="height:100px"></textarea>
+          <textarea name="input_format" placeholder="Input Format" title="Input Format" required style="height:100px"></textarea>
+          <textarea name="output_format" placeholder="Output Format" title="Output Format" required style="height:100px"></textarea>
+          <textarea name="constraints" placeholder="Problem Constraints" title="Problem Constraints" required style="height:100px"></textarea>
+          <textarea name="test_input" placeholder="Test Input" title="Test Input" required style="height:100px"></textarea>
+          <textarea name="test_output" placeholder="Test Output" title="Test Output" required style="height:100px"></textarea>
+          <input name="memory_limit" placeholder="Memory Limit" title="Memory Limit" required/>
+          <input name="time_limit" placeholder="Time Limit" title="Time Limit" required/>
+          <button onclick="removeProblem(${num});">Remove this Problem</button>
+          </div>`;
+          content += htmlData;
+        }
+        p.innerHTML = content;
+        e.style.display = "none";
+      }
+
+      function removeProblem(n) {
+        document.getElementById(`problem-${n}`).remove();
+        if (document.querySelectorAll(".problem-data").length === 0) {
+          document.getElementById("prob-btn").style.display = "block";
+        }
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location = "/admin_login.html";
+      }
+
+      async function addData() {
+        const contest_name = document.getElementById("contest_name").value;
+        const description = document.getElementById("contest_desc").value;
+        const start = document.getElementById("start").value;
+        const duration = document.getElementById("duration").value;
+
+        const problems = [];
+
+        const x = document.querySelectorAll(".problem-data");
+        for (let i = 0; i < x.length; i++) {
+          const p = x[i];
+
+          const problem_name = p.querySelector("[name=problem_name]").value;
+          const problem_desc = p.querySelector("[name=problem_desc]").value;
+          const sample_input = p.querySelector("[name=sample_input]").value;
+          const sample_output = p.querySelector("[name=sample_output]").value;
+          const sample_explanation = p.querySelector(
+            "[name=sample_explanation]"
+          ).value;
+          const input_format = p.querySelector("[name=input_format]").value;
+          const output_format = p.querySelector("[name=output_format]").value;
+          const constraints = p.querySelector("[name=constraints]").value;
+          const memory_limit = p.querySelector("[name=memory_limit]").value;
+          const time_limit = p.querySelector("[name=time_limit]").value;
+          const test_input = p.querySelector("[name=test_input]").value;
+          const test_output = p.querySelector("[name=test_output]").value;
+
+          problems.push({
+            problem_name: problem_name,
+            problem_desc: problem_desc,
+            sample_input: sample_input,
+            sample_output: sample_output,
+            sample_explanation: sample_explanation,
+            input_format: input_format,
+            output_format: output_format,
+            constraints: constraints,
+            memory_limit: memory_limit,
+            time_limit: time_limit,
+            test_input: test_input,
+            test_output: test_output,
+          });
+        }
+
+        const payload = {
+          contest_name: contest_name,
+          description: description,
+          start: start,
+          duration: duration,
+          problems: problems,
+        };
+
+        try {
+          const res = await fetch("http://127.0.0.1:8000/create_contest", {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          });
+          const data = await res.json();
+          if (res.ok) {
+            alert(data?.detail);
+          } else {
+            console.log(data);
+            alert(data?.detail ?? "Internal Server Error");
+          }
+        } catch (e) {
+          alert("Unexpected error has occured");
+        }
+      }
+    </script>
+    <div id="root">
+      <center><h1 class="page-title">CodeDev Admin</h1></center>
+      <button style="float: right" onclick="logout();">LOGOUT</button>
+      <br />
+      <center>
+        <form class="data-form">
+          <div style="background-color: lightgray; font-size: 24px">
+            Create new contest
+          </div>
+          <br />
+          <div class="input-heading">Contest Info:</div>
+          <input
+            id="contest_name"
+            placeholder="Contest Name"
+            title="Contest Name"
+            required
+          />
+          <textarea
+            id="contest_desc"
+            placeholder="Contest Description"
+            required
+            style="height: 150px"
+            title="Contest Description"
+          ></textarea>
+          <div class="input-title">Contest Start Time:</div>
+          <input
+            type="datetime-local"
+            id="start"
+            title="Contest Start Time"
+            required
+          />
+          <input
+            type="number"
+            id="duration"
+            placeholder="Contest Duration (in minutes)"
+            required
+            title="Contest Duration(in minutes)"
+          />
+          <div class="input-heading">Contest Problems:</div>
+          <input
+            type="button"
+            onclick="createProblems(this);"
+            value="Add Problems"
+            id="prob-btn"
+          />
+          <input type="button" onclick="addData()" value="Create Contest" />
+          <div id="problems"></div>
+        </form>
+      </center>
+    </div>
+    <br />
+  </body>
+</html>

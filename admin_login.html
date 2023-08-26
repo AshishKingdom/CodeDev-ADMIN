@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Admin Login</title>
+  </head>
+  <body>
+    <script>
+      async function login_user() {
+        const username = document.getElementById("username").value ?? "";
+        const password = document.getElementById("password").value ?? "";
+
+        const formData = new URLSearchParams();
+        formData.append("username", username);
+        formData.append("password", password);
+
+        try {
+          const res = await fetch("http://127.0.0.1:8000/login", {
+            method: "POST",
+            body: formData,
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded",
+            },
+          });
+          const data = await res.json();
+          if (res.ok) {
+            if (data?.is_admin == false) {
+              alert("User do not have admin rights");
+            } else {
+              alert("login successfull");
+              localStorage.setItem("user", username);
+              localStorage.setItem("token", data?.access_token);
+              localStorage.setItem("is_admin", data?.is_admin);
+              window.location = "/";
+            }
+          } else {
+            alert("Some error has occured");
+          }
+        } catch (e) {
+          console.log(e);
+          alert("Unexpedted error has occured.");
+        }
+      }
+    </script>
+    <div id="root">
+      <center><h1 class="page-title">CodeDev Admin</h1></center>
+      <br />
+      <br />
+      <center>
+        <form class="data-form">
+          <div style="background-color: lightgray; font-size: 24px">
+            ADMIN LOGIN
+          </div>
+          <input
+            id="username"
+            placeholder="username"
+            title="username"
+            required
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="password"
+            title="password"
+            required
+          />
+          <br />
+          <input
+            type="button"
+            value="LOGIN"
+            id="login-btn"
+            onclick="login_user();"
+          />
+        </form>
+      </center>
+    </div>
+  </body>
+</html>

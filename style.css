@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.page-title {
+  background-color: lightgray;
+  padding: 20px;
+  margin: 0;
+}
+
+.data-form {
+  width: 100vh;
+  border: 1px solid black;
+}
+
+input,
+textarea {
+  width: 80%;
+  font-size: 20px;
+  margin: 10px;
+  box-sizing: border-box;
+  outline: none;
+}
+.input-title,
+.input-heading {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  margin: 10px;
+}
+.input-heading {
+  background-color: lightgray;
+}
+button, input[type=button] {
+  font-size: 20px;
+  padding: 10px;
+  background: #004094;
+  color: white;
+  border: none;
+  margin: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
