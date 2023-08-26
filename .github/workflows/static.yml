@@ -33,14 +33,13 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
       - name: Add Production variables
         run: echo "sessionStorage.setItem('PREFIX_PATH','${PREFIX_PATH}');sessionStorage.setItem('BACKEND_PATH','${BACKEND_PATH}');">>config.js
         env:
           PREFIX_PATH: ${{secrets.PREFIX_PATH}}
           BACKEND_PATH: ${{secrets.BACKEND_PATH}}
-      - name: Uploading the content
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
           # Upload entire repository
           path: '.'
