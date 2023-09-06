@@ -11,9 +11,8 @@
   </head>
   <body>
     <script>
-      const prefix_path = sessionStorage.getItem("PREFIX_PATH") ?? "/";
-      const backend_path =
-        sessionStorage.getItem("BACKEND_PATH") ?? "http://127.0.0.1:8000";
+      const prefix_path = sessionStorage.getItem("PREFIX_PATH") ?? "/admin";
+      const backend_path = sessionStorage.getItem("BACKEND_PATH") ?? "/api";
 
       async function login_user() {
         const username = document.getElementById("username").value ?? "";
@@ -40,7 +39,8 @@
               localStorage.setItem("user", username);
               localStorage.setItem("token", data?.access_token);
               localStorage.setItem("is_admin", data?.is_admin);
-              window.location = prefix_path;
+              console.log(prefix_path + "/index.html");
+              window.location = prefix_path + "/index.html";
             }
           } else {
             alert("Some error has occured");

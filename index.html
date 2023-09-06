@@ -13,9 +13,8 @@
     <script>
       // login is required to create new contests
 
-      const prefix_path = sessionStorage.getItem("PREFIX_PATH") ?? "/";
-      const backend_path =
-        sessionStorage.getItem("BACKEND_PATH") ?? "http://127.0.0.1:8000";
+      const prefix_path = sessionStorage.getItem("PREFIX_PATH") ?? "/admin";
+      const backend_path = sessionStorage.getItem("BACKEND_PATH") ?? "/api";
 
       if (
         localStorage.getItem("user") == null ||
@@ -23,7 +22,7 @@
         localStorage.getItem("is_admin") == null ||
         localStorage.getItem("is_admin") == false
       ) {
-        window.location = prefix_path + "admin_login.html";
+        window.location = prefix_path + "/admin_login.html";
       }
 
       function createProblems(e) {
@@ -63,7 +62,7 @@
 
       function logout() {
         localStorage.clear();
-        window.location = prefix_path + "admin_login.html";
+        window.location = prefix_path + "/admin_login.html";
       }
 
       async function addData() {
