@@ -111,8 +111,8 @@
         const payload = {
           contest_name: contest_name,
           description: description,
-          start: start,
-          duration: duration,
+          start: Math.floor(new Date(start).getTime()/1000),
+          duration: duration * 60,
           problems: problems,
         };
 
